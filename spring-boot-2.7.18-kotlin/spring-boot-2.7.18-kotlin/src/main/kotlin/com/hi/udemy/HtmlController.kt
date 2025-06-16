@@ -11,10 +11,4 @@ class HtmlController {
     fun index(model: Model): String {
         return "index"
     }
-
-    @GetMapping("/post/{num}")
-    fun post(model: Model, @PathVariable num:Int) {
-
-        println("num:\t${num}")
-    }
 }
