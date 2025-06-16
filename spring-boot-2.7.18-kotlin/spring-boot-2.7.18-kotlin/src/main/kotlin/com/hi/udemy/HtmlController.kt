@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.security.MessageDigest
 
 @Controller
 class HtmlController {
@@ -17,6 +18,13 @@ class HtmlController {
     @GetMapping("/")
     fun index(model: Model): String {
         return "index"
+    }
+
+    fun crypto(ss:String):String{
+        val sha= MessageDigest.getInstance("SHA-256")
+        val hexa=sha.digest(ss.toByteArray())
+        val crypto_str=hexa.fold("",{str,it->str+"%02x".format(it)})
+        return crypto_str
     }
 
     @GetMapping("/{formType}")
@@ -39,8 +47,9 @@ class HtmlController {
                  @RequestParam(value = "id") userId:String,
                  @RequestParam(value = "password") password:String): String {
         try {
-            val user = repository.save(User(userId,password))
-            println(user.toString())
+            val cryptoPass=crypto(password)
+
+            repository.save(User(userId , cryptoPass))
         }catch (e:Exception){
             e.printStackTrace()
         }
