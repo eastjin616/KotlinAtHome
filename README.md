@@ -2,4 +2,4 @@
 KotlinAtHome
 
 #회원가입
-<img src="/asset/회원가입.gif" alt="회원가입 GIF"/>
+![회원가입](src/main/resources/static/asset/회원가입.gif)
