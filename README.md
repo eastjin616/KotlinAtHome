@@ -1,4 +1,4 @@
-# Kotlin and SpringBoot
+# Kotlin and SpringBoot 기초
 KotlinAtHome
 
 #응용
