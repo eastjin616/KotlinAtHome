@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.security.MessageDigest
+import javax.servlet.http.HttpSession
 
 @Controller
 class HtmlController {
@@ -48,12 +49,50 @@ class HtmlController {
                  @RequestParam(value = "password") password:String): String {
         try {
             val cryptoPass=crypto(password)
+            println("🔐 [SIGN] 암호화된 비밀번호 = $cryptoPass")
+            println("🧑 [SIGN] 저장할 유저 = $userId")
 
             repository.save(User(userId , cryptoPass))
+            println("✅ 저장 성공")
         }catch (e:Exception){
+            println("❌ 저장 실패")
             e.printStackTrace()
         }
 
         return "index"
+    }
+
+    @PostMapping("/login")
+    fun postlogin(model: Model,
+                  @RequestParam(value = "id") userId:String,
+                  @RequestParam(value = "password") password:String, httpSession: HttpSession
+    ): String {
+
+        var pageName=""
+
+        try {
+            val cryptoPass=crypto(password)
+            val db_user=repository.findByUserId(userId)
+
+            if(db_user != null){
+                val db_pass = db_user.password
+
+                if(cryptoPass.equals(db_pass)){
+                    httpSession.setAttribute("userId", db_user.userId)
+                    model.addAttribute("title" ,"welcome")
+                    model.addAttribute("userId", userId)
+                    pageName= "welcome"
+                }
+
+                else {
+                    model.addAttribute("title" ,"login")
+                    pageName="login"
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return pageName
     }
 }
